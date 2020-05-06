@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import sys
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,7 +29,7 @@ SECRET_KEY = 'a*wtwoz4ygu))u-r*x)_jhow!d6ril!wkyfmh5=+jk53fdz)sb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,14 +44,17 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.articles.apps.ArticlesConfig',
     'apps.comments.apps.CommentsConfig',
-    'DjangoUeditor',
+    'apps.fav.apps.FavConfig',
+    'apps.links.apps.LinksConfig',
     'extra_apps.xadmin.apps.XAdminConfig',
     'crispy_forms',
     'rest_framework',
     'django_filters',
     'corsheaders',
     'social_django',
-    'rest_framework.authtoken'
+    'mdeditor',
+    'DjangoUeditor',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -140,13 +144,17 @@ USE_TZ = False # 默认True，时间是utc时间，我们使用本地时间，�
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
+MEDIA_URL = "/media/"
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
 # insert by myself
 AUTH_USER_MODEL = "users.UserProfile"
-MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -174,3 +182,17 @@ SOCIAL_AUTH_WEIXIN_KEY = '2744546942'
 SOCIAL_AUTH_WEIXIN_SECRET = 'ef956adfb5943c86de459f0969822bbf'
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'  # 如果是 163 改成 smtp.163.com
+EMAIL_PORT = 465
+EMAIL_HOST_USER = '1270392394@qq.com'  # 在这里填入您的QQ邮箱账号
+EMAIL_HOST_PASSWORD = 'gjwgvfsothafgdfc'  # 请在这里填上您自己邮箱的授权码
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_USE_SSL = True
+
+REGEX_EMAIL = "^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$"
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'utils.jwt_response_payload_handler.jwt_response_payload_handler',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=5),
+}

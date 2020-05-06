@@ -1,25 +1,17 @@
 import xadmin
 
-from comments.models import ArticleComment, MessageComment, CommentUser
+from comments.models import Comment, CommentReply
 
 
-class CommentUserAdmin(object):
-    list_display = ["nickname", "email"]
-    search_filds = ["nickname", "email"]
-    list_filter = ["nickname", "email"]
-
-class ArticleCommentAdmin(object):
-    list_display = ["author", "belong"]
-    search_filds = ["author", "belong"]
-    list_filter = ["author", "belong"]
+class CommentAdmin(object):
+    list_display = ["type", "content", "author"]
+    search_filds = ["type", "author"]
+    list_filter = ["type", "author"]
 
 
-class MessageCommentAdmin(object):
-    list_display = ["author"]
-    search_filds = ["author"]
-    list_filter = ["author"]
+class CommentReplyAdmin(object):
+    list_display = ["content", "parent"]
 
 
-xadmin.site.register(CommentUser, CommentUserAdmin)
-xadmin.site.register(ArticleComment, ArticleCommentAdmin)
-xadmin.site.register(MessageComment, MessageCommentAdmin)
+xadmin.site.register(Comment, CommentAdmin)
+xadmin.site.register(CommentReply, CommentReplyAdmin)

@@ -20,7 +20,10 @@ import xadmin
 from django.views.static import serve
 from bloggl.settings import MEDIA_ROOT
 from articles.views import ArticleListViewSet, ArticleTagViewSet, ArticleCategoryViewSet
-from comments.views import ArticleCommentViewSet
+from users.views import EmailVerifyViewset, UserViewset, AvatarViewset
+from comments.views import CommentViewSet, ReplyViewSet
+from fav.views import UserFavViewset
+from links.views import LinkViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
 
@@ -28,7 +31,13 @@ router = DefaultRouter()
 router.register(r'^articles', ArticleListViewSet, basename='articles')
 router.register(r'^categories', ArticleCategoryViewSet, basename='categories')
 router.register(r'^tags', ArticleTagViewSet, basename='tags')
-router.register(r'^comments', ArticleCommentViewSet, basename='article_comments')
+router.register(r'codes', EmailVerifyViewset, basename="codes")
+router.register(r'register', UserViewset, basename="register")
+router.register(r'comments', CommentViewSet, basename="comments")
+router.register(r'reply', ReplyViewSet, basename="replys")
+router.register(r'userfavs', UserFavViewset, basename="userfavs")
+router.register(r'links', LinkViewSet, basename="links")
+router.register(r'^avatar', AvatarViewset, basename="avatar")
 
 urlpatterns = [
     path('xadmin/', xadmin.site.urls),
@@ -40,5 +49,6 @@ urlpatterns = [
     # 登录url
     url(r'^api-token-auth/', views.obtain_auth_token),
     url(r'^login/', obtain_jwt_token),
-    url('', include('social_django.urls', namespace='social'))
+    url('', include('social_django.urls', namespace='social')),
+    url(r'mdeditor/', include('mdeditor.urls')),
 ]

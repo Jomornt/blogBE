@@ -19,14 +19,14 @@ class ArticleTagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class ArticlePagination(PageNumberPagination):
-    page_size = 10
+    page_size = 6
     page_size_query_param = 'page_size'
     page_query_param = 'page'
     max_page_size = 100
 
 
 class ArticleListViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    queryset = Article.objects.all()
+    queryset = Article.objects.all().order_by('-created_time')
     serializer_class = ArticleSerializer
     pagination_class = ArticlePagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]

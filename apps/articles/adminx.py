@@ -4,7 +4,7 @@ from articles.models import ArticleCategory, ArticleTag, Article
 
 
 class ArticleCategoryAdmin(object):
-    list_display = ["name", "category_type", "parent_category" ,"is_visible"]
+    list_display = ["name", "is_visible"]
     search_filds = ["name"]
     list_filter = ["is_visible"]
 

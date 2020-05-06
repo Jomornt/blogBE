@@ -1,45 +1,38 @@
 from django.db import models
-from articles.models import Article
 from users.models import BaseModel
+from articles.models import Article
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
-class CommentUser(models.Model):
-    nickname = models.CharField(max_length=20, verbose_name='昵称')
-    email = models.CharField(max_length=30, verbose_name='邮箱')
-
-    class Meta:
-        verbose_name = '留言用户'
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.nickname
-
-
-# 评论信息表
 class Comment(BaseModel):
-    author = models.ForeignKey(CommentUser, related_name='%(class)s_related', verbose_name='评论人', on_delete=models.CASCADE)
-    content = models.TextField(max_length=300, default="", verbose_name='评论内容')
-    parent = models.ForeignKey('self', verbose_name='父评论', related_name='%(class)s_child_comments', blank=True, null=True, on_delete=models.CASCADE)
-    rep_to = models.ForeignKey('self', verbose_name='回复', related_name='%(class)s_rep_comments', blank=True, null=True, on_delete=models.CASCADE)
+    COMMENT_TYPE = (
+        (1, "留言板"),
+        (2, "文章评论"),
+    )
+    type = models.IntegerField(default=1, choices=COMMENT_TYPE, verbose_name="评论类型",
+                                      help_text=u"评论类型: 1(留言板),2(文章评论)")
+    article = models.ForeignKey(Article, blank=True, null=True, on_delete=models.CASCADE)
+    content = models.TextField()
+    author = models.ForeignKey(User, related_name='user_comments', blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
-        abstract = True
+        verbose_name = "评论"
+        verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.content[:20]
+        return "{username}--{content}".format(username=self.author.username, content=self.content)
 
 
-class ArticleComment(Comment):
-    belong = models.ForeignKey(Article, related_name='article_comments', verbose_name='所属文章', on_delete=models.CASCADE)
+class CommentReply(BaseModel):
+    parent = models.ForeignKey(Comment, related_name='child_replys', blank=True, null=True, on_delete=models.CASCADE)
+    content = models.TextField()
+    reply_to = models.ForeignKey(User, related_name='reply_comment', blank=True, null=True, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='reply', blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = '文章评论'
+        verbose_name = "回复"
         verbose_name_plural = verbose_name
-        ordering = ['created_time']
 
-
-class MessageComment(Comment):
-    class Meta:
-        verbose_name = '留言'
-        verbose_name_plural = verbose_name
-        ordering = ['created_time']
+    def __str__(self):
+        return self.content

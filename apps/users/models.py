@@ -15,6 +15,8 @@ class BaseModel(models.Model):
 
 class UserProfile(AbstractUser):
     nickname = models.CharField(max_length=30, null=True, blank=True, verbose_name="昵称")
+    email = models.EmailField(max_length=100, null=True, blank=True, verbose_name="邮箱")
+    avatar = models.ImageField(upload_to='avatar',default='',verbose_name='头像')
 
     class Meta:
         verbose_name = "用户"
@@ -22,3 +24,18 @@ class UserProfile(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class VerifyCode(BaseModel):
+    """
+    邮箱验证码
+    """
+    code = models.CharField(max_length=10, verbose_name="验证码")
+    email = models.CharField(max_length=30, verbose_name="邮箱")
+
+    class Meta:
+        verbose_name = "邮箱验证码"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.code
